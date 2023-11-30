@@ -7,6 +7,12 @@ const config = require("../config/auth.config");
 
 
 
+const Files = db.files;
+const fs = require("fs").promises;
+
+
+
+
 exports.register = async (req, res) => {
     if(!req.body.email ||!req.body.password)
     return res.status(400).json({error: "Please provide email and password"});
@@ -63,13 +69,11 @@ exports.signin= async(req, res) => {
           req.body.password,
           user.password
         );
-        const lastLoggedIn = await user.lastLoggedIn;
-        // Determine firstTimeLogin based on lastLoggedIn
-        const firstTimeLogin = lastLoggedIn === null ? true : false;
+       
 
 
-        user.lastLoggedIn = new Date();
-        await user.save();
+   
+       
 
         if (!passwordIsValid) {
           return res.status(401).send({
@@ -77,20 +81,23 @@ exports.signin= async(req, res) => {
           });
         }
     
-        const token = jwt.sign({ id: user.userId },
-                               config.secret,
-                               {
-                                algorithm: 'HS256',
-                                allowInsecureKeySizes: true,
-                                expiresIn: 86400, // 24 hours
-                               });
+       
+
+         // Set the user ID in the session
+        req.session.userId = user.userId;
+
+        // Set the token as a cookie
+        res.cookie("crypto-session", req.sessionID, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production", // Set to true in production
+          sameSite: "strict",
+          maxAge: 86400 * 1000, // 24 hours in milliseconds
+        });
                            
         return res.status(200).send({
           id: user.id,
           username: user.username,
           email: user.email,
-          accesstoken: token,
-          firsTimeLogin: firstTimeLogin
         });
       } catch (error) {
         return res.status(500).send({ message: error.message });
@@ -99,3 +106,46 @@ exports.signin= async(req, res) => {
       
 
 };
+
+exports.checkId = async (req, res) => {
+
+    try{
+
+        const userId = req.session.userId;
+    console.log(userId);
+
+    res.status(200).send({message:userId});
+
+
+
+    }catch (error){
+        return res.status(500).send({message: error.message});
+    }
+
+
+
+};
+
+exports.logout = async (req, res) => {
+    try {
+        // Set userId to null before clearing the session cookie
+        req.session.userId = null;
+    
+        // Clear the session cookie
+        req.session = null;
+    
+        res.clearCookie('crypto-session');
+    
+        return res.status(200).send({ message: 'Logout successful.' });
+      } catch (error) {
+        return res.status(500).send({ message: error.message });
+      }
+};
+
+
+
+  
+
+
+
+

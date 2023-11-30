@@ -21,6 +21,14 @@ db.sequelize = sequelize;
 
 
 db.users = require("./users.models.js")(sequelize, Sequelize);
+db.data = require("./data.models.js")(sequelize, Sequelize);
+
+const User = db.users;
+const Data = db.data;
+
+
+User.hasMany(Data, { foreignKey: 'userId', as: 'data' });
+Data.belongsTo(User, { foreignKey: 'userId' });
 
 
 

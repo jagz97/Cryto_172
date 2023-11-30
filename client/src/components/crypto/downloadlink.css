@@ -1,0 +1,28 @@
+.centered-link {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+  }
+  
+  .link-box {
+    display: inline-block;
+    padding: 10px;
+    border: 1px solid #645f5f;
+    border-radius: 5px;
+    background-color: rgb(0, 9, 88);
+  }
+  
+  .link-icon {
+    margin-right: 5px;
+  }
+  
+  /* Add this class to your existing link element */
+  .link {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #ffffff;
+  }
+  
+  

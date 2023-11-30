@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const cookieSession = require("cookie-session");
 
 global.__basedir = __dirname;
 
@@ -25,6 +26,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
+app.use(
+  cookieSession({
+    name: "crypto-session",
+    keys: ["COOKIE_SECRET"], // should use as secret environment variable
+    httpOnly: false,
+    sameSite: 'strict'
+  })
+);
+
 
 const db = require("./app/models");
 db.sequelize.sync({force: true})
@@ -45,6 +55,7 @@ app.get("/", (req, res) => {
 
 
 require("./app/routes/users.routes")(app);
+require("./app/routes/crypto.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
