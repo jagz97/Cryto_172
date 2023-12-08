@@ -114,6 +114,7 @@ const FileUploadForm = ({ onFile }) => {
         <option value="rc4">RC4</option>
         <option value="simpleSubstitution">Simple Substitution</option>
         <option value="doubleTranposition">Double Transposition</option>
+        <option value="des">DES</option>
       </select>
       <br />
       <button className="upload-button" onClick={handleUpload}>

@@ -6,7 +6,7 @@ const doubleTransposition = require("../helpers/doubleTransposition");
 const simpleSubstitution = require("../helpers/simpleSubstitution");
 const { Console } = require("console");
 const fs = require("fs").promises;
-
+const des = require("../helpers/des");
 
 exports.encryptFile = async (req, res) => {
     
@@ -47,7 +47,12 @@ exports.encryptFile = async (req, res) => {
             const key1 = '1234';
             const key2 = '5678';
             encryptedContent = doubleTransposition.encrypt(key1, key2, fileContents);
-        } else {
+        } 
+        
+        else if (content === 'des') {
+            const deskey = '00112233445566778899AABBCCDDEEFF0011223344556677';
+            encryptedContent = des.encryptDES(deskey,fileContents);
+        }else {
             return res.status(400).json({ message: "Unsupported encryption algorithm" });
         }
 
@@ -107,7 +112,12 @@ exports.decryptFile = async (req, res) => {
             const key1 = '1234';
             const key2 = '5678';
             decryptedContent = doubleTransposition.decrypt(key1, key2, fileContents);
-        } else {
+        } 
+        else if (content === 'des') {
+            const deskey = '00112233445566778899AABBCCDDEEFF0011223344556677';
+            decryptedContent = des.decryptDES(deskey,fileContents);
+        }
+          else {
             return res.status(400).json({ message: "Unsupported encryption algorithm" });
         }
 
@@ -160,7 +170,12 @@ exports.encrpytStoreContent = async (req, res) => {
             encryptedContent = doubleTransposition.encrypt(key1, key2, textInput);
             console.log(encryptedContent);
             
-        } else {
+        } else if (content === 'des') {
+            const deskey = '00112233445566778899AABBCCDDEEFF0011223344556677';
+            encryptedContent = des.encryptDES(deskey,textInput);
+        }
+    
+        else {
             return res.status(400).json({ message: "Unsupported encryption algorithm" });
         }
 
@@ -240,6 +255,10 @@ exports.decryptStoreContent = async (req, res) => {
             const key2 = '5678'; // Replace with your
 
             decryptedContent = doubleTransposition.decrypt(key1, key2, content.encryptedData);
+        }
+        else if (content === 'des') {
+            const deskey = '00112233445566778899AABBCCDDEEFF0011223344556677';
+            decryptedContent = des.decryptDES(deskey,textInput);
         }
         
         

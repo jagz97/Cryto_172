@@ -61,3 +61,5 @@ const simpleSubstitution = {
 };
 
 module.exports = simpleSubstitution;
+
+
